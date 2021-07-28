@@ -1,3 +1,9 @@
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 //Lesson 3
 var HelloWorld = /** @class */ (function () {
     function HelloWorld(message) {
@@ -85,3 +91,59 @@ var s = {
 };
 console.log(s);
 console.log(s["graduate"]);
+//Lesson 10-Generic Classes and interfaces
+var GenericNumber = /** @class */ (function () {
+    function GenericNumber() {
+    }
+    return GenericNumber;
+}());
+var myGenericNumber = new GenericNumber();
+myGenericNumber.zeroValue = 0;
+myGenericNumber.add = function (x, y) {
+    return x + y;
+};
+var List = /** @class */ (function () {
+    function List() {
+        this.data = [];
+    }
+    List.prototype.add = function (t) {
+        this.data.push(t);
+    };
+    List.prototype.remove = function (t) {
+        var index = this.data.indexOf(t);
+        if (index > -1) {
+            this.data.splice(index, 1); //array.splice(index, howmany, item1, ....., itemX)
+        }
+    };
+    List.prototype.arrayItems = function () {
+        return this.data;
+    };
+    return List;
+}());
+var numbers = new List();
+numbers.add(11);
+numbers.add(12);
+numbers.add(13);
+numbers.remove(13);
+var numbersArray = numbers.arrayItems();
+console.log(numbersArray);
+//Lesson 11 - Introduction to decorators
+/*A decorator is a special kind of declaration that can be attached to a class, declaration, method,
+accessor, property or parameter. It uses the form @expression which evaluates a function that will
+be called at runtime wit information about the decorated declaration
+*/
+function log(target, key, descriptor) {
+    console.log(key + " was called");
+}
+var Calculator = /** @class */ (function () {
+    function Calculator() {
+    }
+    //Using decorator functions
+    Calculator.prototype.square = function (n) {
+        return n * n;
+    };
+    __decorate([
+        log
+    ], Calculator.prototype, "square", null);
+    return Calculator;
+}());

@@ -157,3 +157,67 @@ let s:States<boolean>={
 console.log(s);
 console.log(s["graduate"]);
 
+
+//Lesson 10-Generic Classes and interfaces
+class GenericNumber<T>{
+    zeroValue:T;
+    add: (x:T, y:T) => T;
+}
+
+let myGenericNumber = new GenericNumber<number>();
+myGenericNumber.zeroValue = 0;
+myGenericNumber.add = (x,y) =>{
+    return x+y;
+}
+
+interface Collection<T>{
+    add(t:T):void;
+    remove(t:T):void;
+    arrayItems(): T[];
+}
+
+class List<T> implements Collection<T>{
+    private data: T[] = [];
+
+    add(t:T):void{
+        this.data.push(t);
+    }
+
+    remove(t:T):void{
+        let index = this.data.indexOf(t);
+        if (index>-1){
+            this.data.splice(index, 1); //array.splice(index, howmany, item1, ....., itemX)
+        }
+    }
+
+    arrayItems(): T[]{
+        return this.data;
+    }
+}
+
+let numbers: Collection<number> = new List();
+numbers.add(11);
+numbers.add(12);
+numbers.add(13);
+numbers.remove(13);
+let numbersArray = numbers.arrayItems();
+console.log(numbersArray);
+
+
+//Lesson 11 - Introduction to decorators
+/*A decorator is a special kind of declaration that can be attached to a class, declaration, method,
+accessor, property or parameter. It uses the form @expression which evaluates a function that will
+be called at runtime wit information about the decorated declaration
+*/
+function log(target, key, descriptor){
+    console.log(`${key} was called`);   
+}
+
+class Calculator{
+    //Using decorator functions
+    @log
+    square(n:number){
+        return n*n;
+    }
+
+}
