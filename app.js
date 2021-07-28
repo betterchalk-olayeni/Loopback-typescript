@@ -148,26 +148,28 @@ Descriptor {
   configurable: true
 }
 */
-function log(target, key, descriptor) {
-    console.log("Target", target);
-    console.log("KEY", key);
-    console.log("Descriptor", descriptor);
-    //descriptor is the method
-    var original = descriptor.value;
-    console.log("Original", original); //This is an anonymous function 
-    descriptor.value = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        //Call the original method, this is pointing to the calculator and its arguments
-        var result = original.apply(this.args);
-        //Log the call, and the result. .apply method binds the argument and the function together
-        console.log(key + " with args " + JSON.stringify(args) + " returned " + JSON.stringify(result) + " ");
-        //return result
-        return result;
+function log(title) {
+    return function (target, key, descriptor) {
+        console.log("Target", target);
+        console.log("KEY", key);
+        console.log("Descriptor", descriptor);
+        //descriptor is the method
+        var original = descriptor.value;
+        console.log("Original", original); //This is an anonymous function 
+        descriptor.value = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            //Call the original method, this is pointing to the calculator and its arguments
+            var result = original.apply(this.args);
+            //Log the call, and the result. .apply method binds the argument and the function together
+            console.log("Title: " + title + " with args " + JSON.stringify(args) + " returned " + JSON.stringify(result) + " ");
+            //return result
+            return result;
+        };
+        return descriptor;
     };
-    return descriptor;
 }
 var Calculator = /** @class */ (function () {
     function Calculator() {
@@ -177,10 +179,51 @@ var Calculator = /** @class */ (function () {
         return n * n;
     };
     __decorate([
-        log
+        log('Calculator Function Decorator')
     ], Calculator.prototype, "square", null);
     return Calculator;
 }());
 var calc = new Calculator();
 calc.square(2);
 calc.square(4);
+//Lesson 14: Property Decorators
+/*The descriptor parameter isn't needed here because we can access
+
+*/
+function property(target, key) {
+    console.log("Target", target);
+    console.log("Key", key);
+    var value = target[key];
+    //Replacement getter
+    var getter = function () {
+        console.log("Getter for " + key + " returned " + value);
+        return value;
+    };
+    //Replacement Setter
+    var setter = function (newVal) {
+        console.log("Set " + key + " to " + newVal);
+        value = newVal;
+    };
+    //Replace the property
+    var isDeleted = delete this[key];
+    if (isDeleted) {
+        Object.defineProperty(target, key, {
+            get: getter,
+            set: setter,
+            enumerable: true,
+            configurable: true
+        });
+    }
+}
+var Person = /** @class */ (function () {
+    function Person() {
+    }
+    __decorate([
+        property
+    ], Person.prototype, "firstName", void 0);
+    return Person;
+}());
+var individual = new Person();
+individual.firstName = "Yensss"; //This calls the setter function
+//Calling the getter function 
+console.log(individual.firstName);
