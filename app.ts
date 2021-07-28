@@ -301,12 +301,32 @@ function property(target: any, key: string) {
     }
 }
 
+@model
 class Person {
     @property
     public firstName: string;
+
+    @property
+    public salary: number;
+
+    calculateSalary(@parameterDecorator taxes:number):number{
+        return this.salary * taxes;
+    }
 }
 
 const individual = new Person();
 individual.firstName = "Yensss"; //This calls the setter function
 //Calling the getter function 
 console.log(individual.firstName);
+
+
+//Lesson 15-Parameter Decorators
+function parameterDecorator(target:any, key:string, index:number){
+    console.log(`Key is ${key} and index is ${index}`);
+}
+
+//Lesson 16 - Class Decorators
+function model(constructor: Function){
+    console.log(constructor);
+    
+}
