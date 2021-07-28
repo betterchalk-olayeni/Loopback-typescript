@@ -99,14 +99,14 @@ let p: Pair<string, number> = {
 
 console.log(person, p);
 
-interface Command<T,R>{
-    id:T;
-    run():R
+interface Command<T, R> {
+    id: T;
+    run(): R
 }
 
-let c:Command<string, number>={
-    id:"31034052345",
-    run: ()=>{
+let c: Command<string, number> = {
+    id: "31034052345",
+    run: () => {
         return +c.id
     }
 }
@@ -116,25 +116,25 @@ console.log(c.run());
 
 
 //Lesson 9
-interface ElementChecker{
-    <T>(items:T[], toBeChecked:T, atIndex:number):boolean
+interface ElementChecker {
+    <T>(items: T[], toBeChecked: T, atIndex: number): boolean
 }
 
 function checkElementAt<T>(
     items: T[],
     toBeChecked: T,
     atIndex: number
-):boolean{
+): boolean {
     return items[atIndex] === toBeChecked
 }
 
 let checker: ElementChecker = checkElementAt;
-let items =[1,2,3,4,5,6];
+let items = [1, 2, 3, 4, 5, 6];
 
-let b:boolean = checker<number>(items, 5, 4)
+let b: boolean = checker<number>(items, 5, 4)
 console.log(b);
 
-let b2:boolean = checker<number>(items, 6, 3)
+let b2: boolean = checker<number>(items, 6, 3)
 console.log(b2);
 
 /*The interface above has three parameters, the first is an array of type T e.g. an array of numbers
@@ -145,13 +145,13 @@ array[thirdParameter] === second parameter
 */
 
 //Interfaces describing indexables
-interface States<R>{
+interface States<R> {
     [state: string]: R;
 }
 
-let s:States<boolean>={
-    graduate:true,
-    "6 foot?":false
+let s: States<boolean> = {
+    graduate: true,
+    "6 foot?": false
 }
 
 console.log(s);
@@ -160,37 +160,37 @@ console.log(s["graduate"]);
 
 //Lesson 10-Generic Classes and interfaces
 class GenericNumber<T>{
-    zeroValue:T;
-    add: (x:T, y:T) => T;
+    zeroValue: T;
+    add: (x: T, y: T) => T;
 }
 
 let myGenericNumber = new GenericNumber<number>();
 myGenericNumber.zeroValue = 0;
-myGenericNumber.add = (x,y) =>{
-    return x+y;
+myGenericNumber.add = (x, y) => {
+    return x + y;
 }
 
-interface Collection<T>{
-    add(t:T):void;
-    remove(t:T):void;
+interface Collection<T> {
+    add(t: T): void;
+    remove(t: T): void;
     arrayItems(): T[];
 }
 
 class List<T> implements Collection<T>{
     private data: T[] = [];
 
-    add(t:T):void{
+    add(t: T): void {
         this.data.push(t);
     }
 
-    remove(t:T):void{
+    remove(t: T): void {
         let index = this.data.indexOf(t);
-        if (index>-1){
+        if (index > -1) {
             this.data.splice(index, 1); //array.splice(index, howmany, item1, ....., itemX)
         }
     }
 
-    arrayItems(): T[]{
+    arrayItems(): T[] {
         return this.data;
     }
 }
@@ -207,17 +207,55 @@ console.log(numbersArray);
 //Lesson 11 - Introduction to decorators
 /*A decorator is a special kind of declaration that can be attached to a class, declaration, method,
 accessor, property or parameter. It uses the form @expression which evaluates a function that will
-be called at runtime wit information about the decorated declaration
+be called at runtime with information about the decorated declaration.
+In the code below, the function log was declared with all its logic and properties then it was
+called in the class Calculator.
+
+The target is an object with the function square
+Target { square: [Function (anonymous)] }
+
+The key is the name of the function 
+KEY square
+
+The descriptor is an object with the following properties
+Descriptor {
+  value: [Function (anonymous)],
+  writable: true,
+  enumerable: true,
+  configurable: true
+}
 */
-function log(target, key, descriptor){
-    console.log(`${key} was called`);   
+
+function log(target, key, descriptor) {
+    console.log("Target",target);
+    console.log("KEY", key);
+    console.log("Descriptor", descriptor);
+
+    //descriptor is the method
+    const original = descriptor.value;
+    console.log("Original", original) //This is an anonymous function 
+    descriptor.value = function (...args: any[]) {
+        //Call the original method, this is pointing to the calculator and its arguments
+        const result = original.apply(this.args);
+        //Log the call, and the result. .apply method binds the argument and the function together
+        console.log(`${key} with args ${JSON.stringify(args)} returned ${JSON.stringify(result)} `);
+
+        //return result
+        return result;
+
+    }
+    return descriptor;
 }
 
-class Calculator{
-    //Using decorator functions
+class Calculator {
+    //Using decorator functions: @log
     @log
-    square(n:number){
-        return n*n;
+    square(n: number) {
+        return n * n;
     }
 
 }
+
+const calc = new Calculator();
+calc.square(2);
+calc.square(4);

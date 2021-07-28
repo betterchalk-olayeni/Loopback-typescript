@@ -130,15 +130,49 @@ console.log(numbersArray);
 //Lesson 11 - Introduction to decorators
 /*A decorator is a special kind of declaration that can be attached to a class, declaration, method,
 accessor, property or parameter. It uses the form @expression which evaluates a function that will
-be called at runtime wit information about the decorated declaration
+be called at runtime with information about the decorated declaration.
+In the code below, the function log was declared with all its logic and properties then it was
+called in the class Calculator.
+
+The target is an object with the function square
+Target { square: [Function (anonymous)] }
+
+The key is the name of the function
+KEY square
+
+The descriptor is an object with the following properties
+Descriptor {
+  value: [Function (anonymous)],
+  writable: true,
+  enumerable: true,
+  configurable: true
+}
 */
 function log(target, key, descriptor) {
-    console.log(key + " was called");
+    console.log("Target", target);
+    console.log("KEY", key);
+    console.log("Descriptor", descriptor);
+    //descriptor is the method
+    var original = descriptor.value;
+    console.log("Original", original); //This is an anonymous function 
+    descriptor.value = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        //Call the original method, this is pointing to the calculator and its arguments
+        var result = original.apply(this.args);
+        //Log the call, and the result. .apply method binds the argument and the function together
+        console.log(key + " with args " + JSON.stringify(args) + " returned " + JSON.stringify(result) + " ");
+        //return result
+        return result;
+    };
+    return descriptor;
 }
 var Calculator = /** @class */ (function () {
     function Calculator() {
     }
-    //Using decorator functions
+    //Using decorator functions: @log
     Calculator.prototype.square = function (n) {
         return n * n;
     };
@@ -147,3 +181,6 @@ var Calculator = /** @class */ (function () {
     ], Calculator.prototype, "square", null);
     return Calculator;
 }());
+var calc = new Calculator();
+calc.square(2);
+calc.square(4);
