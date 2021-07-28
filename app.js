@@ -53,3 +53,35 @@ function customerLogger(customer) {
 }
 var customer = new Customer("Mobolaji", "Anifowose");
 customerLogger(customer);
+var person = {
+    first: "Olayeni Anifowose",
+    second: false
+};
+var p = {
+    first: "Jumia",
+    second: 400
+};
+console.log(person, p);
+var c = {
+    id: "31034052345",
+    run: function () {
+        return +c.id;
+    }
+};
+console.log(c.id);
+console.log(c.run());
+function checkElementAt(items, toBeChecked, atIndex) {
+    return items[atIndex] === toBeChecked;
+}
+var checker = checkElementAt;
+var items = [1, 2, 3, 4, 5, 6];
+var b = checker(items, 5, 4);
+console.log(b);
+var b2 = checker(items, 6, 3);
+console.log(b2);
+var s = {
+    graduate: true,
+    "6 foot?": false
+};
+console.log(s);
+console.log(s["graduate"]);
